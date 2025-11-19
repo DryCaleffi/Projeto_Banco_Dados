@@ -10,7 +10,7 @@ CREATE TABLE Cursos (
     id_curso INT PRIMARY KEY IDENTITY(1,1),
     nome_curso VARCHAR(255) NOT NULL,
     duracao_anos INT NOT NULL,
-    CONSTRAINT UQ_Cursos_Nome UNIQUE (nome_curso) -- Inclus„o  no Banco de dados de refereÍncia, com intuito de evitar duplicidade de informaÁıes
+    CONSTRAINT UQ_Cursos_Nome UNIQUE (nome_curso) -- Inclus√£o  no Banco de dados de refere√™ncia, com intuito de evitar duplicidade de informa√ß√µes
 );
 
 -- Tabela de Departamentos
@@ -27,10 +27,10 @@ CREATE TABLE Professores (
     nome_professor VARCHAR(255) NOT NULL,
     data_nascimento DATE,
     id_departamento INT NULL,
-    FOREIGN KEY (id_departamento) REFERENCES Departamentos(id_departamento),
+    FOREIGN KEY (id_departamento) REFERENCES Departamentos(id_departamento)
 
 );
--- Adicionar a Chave Estrangeira para id_chefe AP”S a criaÁ„o de Professores
+-- Adicionar a Chave Estrangeira para id_chefe AP√ìS a cria√ß√£o de Professores
 ALTER TABLE Departamentos
 ADD FOREIGN KEY (id_chefe) REFERENCES Professores(id_professor);
 
@@ -61,7 +61,7 @@ CREATE TABLE Salas (
     id_sala INT PRIMARY KEY IDENTITY(1,1),
     numero_sala VARCHAR(50) NOT NULL,
     capacidade INT NOT NULL,
-    CONSTRAINT UQ_Salas_Numero UNIQUE (numero_sala) -- Evita salas com mesmo n˙mero
+    CONSTRAINT UQ_Salas_Numero UNIQUE (numero_sala) -- Evita salas com mesmo n√∫mero
 );
 
 -- Tabela de Turmas
@@ -86,7 +86,7 @@ CREATE TABLE Matriculas (
     data_matricula DATE DEFAULT GETDATE(),
     FOREIGN KEY (id_aluno) REFERENCES Alunos(id_aluno),
     FOREIGN KEY (id_turma) REFERENCES Turmas(id_turma),
-    CONSTRAINT UQ_Matriculas_Aluno_Turma UNIQUE (id_aluno, id_turma) -- Evita matrÌculas duplicadas
+    CONSTRAINT UQ_Matriculas_Aluno_Turma UNIQUE (id_aluno, id_turma) -- Evita matr√≠culas duplicadas
 );
 
 -- Tabela de Notas
@@ -106,7 +106,7 @@ CREATE TABLE Funcionarios (
     nome_funcionario VARCHAR(255) NOT NULL,
     cargo VARCHAR(100) NOT NULL,
     data_contratacao DATE DEFAULT GETDATE(),
-    CONSTRAINT UQ_Funcionarios_Nome UNIQUE (nome_funcionario) -- Evita funcion·rios com mesmo nome
+    CONSTRAINT UQ_Funcionarios_Nome UNIQUE (nome_funcionario) -- Evita funcion√°rios com mesmo nome
 );
 
 -- TABELAS DA BIBLIOTECA ---
@@ -132,8 +132,8 @@ CREATE TABLE Categorias (
 CREATE TABLE Livros (
     id_livro INT IDENTITY(1,1) PRIMARY KEY,
     titulo NVARCHAR(200) NOT NULL,
-    ano_publicacao INT CHECK (ano_publicacao <= YEAR(GETDATE())), -- Ano n„o pode ser futuro
-    quantidade_disponivel INT DEFAULT 1 CHECK (quantidade_disponivel >= 0), -- N„o permite quantidade negativa
+    ano_publicacao INT CHECK (ano_publicacao <= YEAR(GETDATE())), -- Ano n√£o pode ser futuro
+    quantidade_disponivel INT DEFAULT 1 CHECK (quantidade_disponivel >= 0), -- N√£o permite quantidade negativa
     id_autor INT NULL,
     id_categoria INT NULL,
     FOREIGN KEY (id_autor) REFERENCES Autores(id_autor),
@@ -141,7 +141,7 @@ CREATE TABLE Livros (
     CONSTRAINT UQ_Livros_Titulo_Autor UNIQUE (titulo, id_autor) -- Evita livros duplicados do mesmo autor
 );
 
--- Tabela de Usu·rios (Alunos ou Funcion·rios)
+-- Tabela de Usu√°rios (Alunos ou Funcion√°rios)
 CREATE TABLE Usuarios (
     id_usuario INT IDENTITY(1,1) PRIMARY KEY,
     tipo_usuario NVARCHAR(20) CHECK (tipo_usuario IN ('Aluno','Funcionario')),
@@ -150,14 +150,14 @@ CREATE TABLE Usuarios (
     data_cadastro DATE DEFAULT GETDATE(),
     FOREIGN KEY (id_aluno) REFERENCES Alunos(id_aluno),
     FOREIGN KEY (id_funcionario) REFERENCES Funcionarios(id_funcionario),
-    -- Garante que um aluno/funcion·rio n„o tenha m˙ltiplos usu·rios
+    -- Garante que um aluno/funcion√°rio n√£o tenha m√∫ltiplos usu√°rios
     CONSTRAINT CHK_Usuarios_Aluno_Funcionario CHECK (
         (tipo_usuario = 'Aluno' AND id_aluno IS NOT NULL AND id_funcionario IS NULL) OR
         (tipo_usuario = 'Funcionario' AND id_funcionario IS NOT NULL AND id_aluno IS NULL)
     )
 );
 
--- Tabela de EmprÈstimos
+-- Tabela de Empr√©stimos
 CREATE TABLE Emprestimos (
     id_emprestimo INT IDENTITY(1,1) PRIMARY KEY,
     id_usuario INT NOT NULL,
@@ -165,13 +165,14 @@ CREATE TABLE Emprestimos (
     data_emprestimo DATE NOT NULL DEFAULT GETDATE(),
     data_prevista DATE NOT NULL,
     data_devolucao DATE NULL,
-    multa DECIMAL(10,2) DEFAULT 0 CHECK (multa >= 0), -- Multa n„o pode ser negativa
+    multa DECIMAL(10,2) DEFAULT 0 CHECK (multa >= 0), -- Multa n√£o pode ser negativa
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario),
     FOREIGN KEY (id_livro) REFERENCES Livros(id_livro),
     CONSTRAINT CHK_Emprestimos_Datas CHECK (data_prevista >= data_emprestimo AND (data_devolucao IS NULL OR data_devolucao >= data_emprestimo))
 );
 
--- Õndice ˙nico filtrado para emprÈstimos ativos (impede m˙ltiplos emprÈstimos ativos do mesmo livro para mesmo usu·rio)
+-- √çndice √∫nico filtrado para empr√©stimos ativos (impede m√∫ltiplos empr√©stimos ativos do mesmo livro para mesmo usu√°rio)
 CREATE UNIQUE INDEX IX_Emprestimos_Usuario_Livro_Ativo 
 ON Emprestimos (id_usuario, id_livro)
 WHERE data_devolucao IS NULL;
+
